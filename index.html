@@ -6,17 +6,60 @@
     <title>Navigation Flashcards</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --bg-primary: #1a2a6c;
+            --bg-secondary: #2a4d69;
+            --bg-tertiary: #4b86b4;
+            --card-bg: #ffffff;
+            --card-border: #e0e7ff;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --text-inverse: #ffffff;
+            --progress-bg: #e0e0e0;
+            --progress-fill: linear-gradient(90deg, #4CAF50, #8BC34A);
+            --header-bg: rgba(26, 42, 108, 0.95);
+            --filter-btn-bg: rgba(255, 255, 255, 0.9);
+            --filter-btn-active: #ff6b6b;
+            --reset-btn-bg: rgba(231, 76, 60, 0.9);
+            --viewed-badge: #27ae60;
+            --toggle-bg: #4a6582;
+            --toggle-handle: #ffffff;
+            --shadow: rgba(0,0,0,0.15);
+        }
+
+        .dark-mode {
+            --bg-primary: #0d1a3a;
+            --bg-secondary: #1a365c;
+            --bg-tertiary: #2a4d69;
+            --card-bg: #1e2b4d;
+            --card-border: #2a3a5c;
+            --text-primary: #e0e7ff;
+            --text-secondary: #a0aec0;
+            --text-inverse: #f0f4ff;
+            --progress-bg: #2a3a5c;
+            --progress-fill: linear-gradient(90deg, #388E3C, #689F38);
+            --header-bg: rgba(13, 26, 58, 0.95);
+            --filter-btn-bg: rgba(42, 58, 92, 0.9);
+            --filter-btn-active: #e55a5a;
+            --reset-btn-bg: #c0392b;
+            --viewed-badge: #2e7d32;
+            --toggle-bg: #ff6b6b;
+            --toggle-handle: #1e2b4d;
+            --shadow: rgba(0,0,0,0.3);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         body {
-            background: linear-gradient(135deg, #1a2a6c, #2a4d69, #4b86b4);
-            color: #333;
+            background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary), var(--bg-tertiary));
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 15px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -32,15 +75,22 @@
         header {
             text-align: center;
             padding: 15px 0 10px;
-            color: white;
+            color: var(--text-inverse);
             text-shadow: 0 1px 3px rgba(0,0,0,0.3);
             position: sticky;
             top: 0;
             z-index: 10;
-            background: rgba(26, 42, 108, 0.95);
+            background: var(--header-bg);
             margin: -15px -15px 10px;
             padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 10px var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-content {
+            flex: 1;
         }
         
         h1 {
@@ -58,6 +108,47 @@
             line-height: 1.4;
         }
         
+        .dark-mode-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--toggle-bg);
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            margin-left: 10px;
+        }
+        
+        .toggle-handle {
+            width: 22px;
+            height: 22px;
+            background: var(--toggle-handle);
+            border-radius: 50%;
+            position: absolute;
+            left: 4px;
+            transition: transform 0.3s ease;
+        }
+        
+        .dark-mode .toggle-handle {
+            transform: translateX(30px);
+        }
+        
+        .dark-mode-toggle i {
+            color: var(--text-inverse);
+            font-size: 0.8rem;
+            position: absolute;
+        }
+        
+        .fa-sun {
+            left: 8px;
+        }
+        
+        .fa-moon {
+            right: 8px;
+        }
+        
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -68,14 +159,14 @@
         }
         
         .filter-btn {
-            background: rgba(255, 255, 255, 0.9);
+            background: var(--filter-btn-bg);
             border: none;
             border-radius: 50px;
             padding: 10px 16px;
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px var(--shadow);
             display: flex;
             align-items: center;
             gap: 6px;
@@ -84,30 +175,26 @@
             max-width: 48%;
             min-width: 140px;
             justify-content: center;
+            color: var(--text-primary);
         }
         
         .filter-btn.active {
-            background: #ff6b6b;
-            color: white;
+            background: var(--filter-btn-active);
+            color: var(--text-inverse);
             transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
-        }
-        
-        .filter-btn:hover:not(.active) {
-            background: white;
-            transform: translateY(-1px);
+            box-shadow: 0 4px 6px var(--shadow);
         }
         
         .reset-btn {
-            background: rgba(231, 76, 60, 0.9);
-            color: white;
+            background: var(--reset-btn-bg);
+            color: var(--text-inverse);
             border: none;
             border-radius: 50px;
             padding: 12px 20px;
             font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px var(--shadow);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -119,17 +206,23 @@
         }
         
         .reset-btn:active {
-            background: #e74c3c;
             transform: translateY(1px);
         }
         
         .progress-container {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 15px;
             margin: 15px auto;
             max-width: 100%;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 10px var(--shadow);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dark-mode .progress-container {
+            background: rgba(30, 43, 77, 0.5);
         }
         
         .progress-header {
@@ -137,13 +230,12 @@
             justify-content: space-between;
             margin-bottom: 12px;
             font-weight: bold;
-            color: #2c3e50;
             font-size: 1.1rem;
         }
         
         .progress-bar {
             height: 18px;
-            background: #e0e0e0;
+            background: var(--progress-bg);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 10px;
@@ -151,7 +243,7 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #4CAF50, #8BC34A);
+            background: var(--progress-fill);
             border-radius: 10px;
             transition: width 0.5s ease;
             width: 0%;
@@ -161,7 +253,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.9rem;
-            color: #555;
+            color: var(--text-secondary);
         }
         
         .reset-section {
@@ -208,18 +300,18 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            box-shadow: 0 5px 15px var(--shadow);
         }
         
         .flashcard-front {
-            background: linear-gradient(135deg, #ffffff, #f5f7fa);
-            border: 2px solid #e0e7ff;
-            color: #2c3e50;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            color: var(--text-primary);
         }
         
         .flashcard-back {
-            background: linear-gradient(135deg, #2c3e50, #4a6582);
-            color: white;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            color: var(--text-inverse);
             transform: rotateY(180deg);
             -webkit-transform: rotateY(180deg);
             overflow-y: auto;
@@ -236,12 +328,12 @@
             font-weight: bold;
         }
         
-        .navigation .card-category { background: rgba(26, 42, 108, 0.2); color: #1a2a6c; }
-        .lights .card-category { background: rgba(255, 107, 107, 0.2); color: #c44545; }
-        .tides .card-category { background: rgba(74, 134, 180, 0.2); color: #2a4d69; }
-        .position .card-category { background: rgba(46, 204, 113, 0.2); color: #27ae60; }
-        .instruments .card-category { background: rgba(155, 89, 182, 0.2); color: #8e44ad; }
-        .publications .card-category { background: rgba(241, 196, 15, 0.2); color: #d35400; }
+        .navigation .card-category { background: rgba(26, 42, 108, 0.2); color: #8a9dff; }
+        .lights .card-category { background: rgba(255, 107, 107, 0.2); color: #ff9d9d; }
+        .tides .card-category { background: rgba(74, 134, 180, 0.2); color: #9acdff; }
+        .position .card-category { background: rgba(46, 204, 113, 0.2); color: #80e8a8; }
+        .instruments .card-category { background: rgba(155, 89, 182, 0.2); color: #d19ff5; }
+        .publications .card-category { background: rgba(241, 196, 15, 0.2); color: #ffe066; }
         
         .flashcard-front h3 {
             font-size: 1.25rem;
@@ -269,13 +361,13 @@
             width: 100%;
             text-align: center;
             font-size: 0.85rem;
-            color: #7f8c8d;
+            color: var(--text-secondary);
             padding: 0 20px;
         }
         
         .footer-note {
             text-align: center;
-            color: white;
+            color: var(--text-inverse);
             margin-top: 25px;
             padding: 15px;
             font-size: 0.85rem;
@@ -286,7 +378,7 @@
             position: absolute;
             top: 12px;
             left: 12px;
-            background: #27ae60;
+            background: var(--viewed-badge);
             color: white;
             padding: 3px 10px;
             border-radius: 15px;
@@ -313,6 +405,10 @@
         @media only screen and (max-width: 600px) {
             h1 {
                 font-size: 1.6rem;
+            }
+            
+            .header-content {
+                padding-right: 10px;
             }
             
             .subtitle {
@@ -370,8 +466,15 @@
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-ship"></i> Navigation Flashcards</h1>
-            <p class="subtitle">Study tool for maritime navigation. Tap cards to flip. Filter by category.</p>
+            <div class="header-content">
+                <h1><i class="fas fa-ship"></i> Navigation Flashcards</h1>
+                <p class="subtitle">Study tool for maritime navigation. Tap cards to flip. Filter by category.</p>
+            </div>
+            <div class="dark-mode-toggle" id="dark-mode-toggle">
+                <i class="fas fa-sun"></i>
+                <i class="fas fa-moon"></i>
+                <div class="toggle-handle"></div>
+            </div>
         </header>
         
         <div class="controls">
@@ -409,7 +512,7 @@
         </div>
         
         <div class="footer-note">
-            <p>Optimized for iPhone | Tap cards to flip | Progress saved automatically</p>
+            <p>Dark Mode Enabled | Tap cards to flip | Progress saved automatically</p>
         </div>
     </div>
 
@@ -563,8 +666,8 @@
             {
                 id: 11,
                 category: "lights",
-                front: "What are the 5 types of marks used in navigation?",
-                back: "Lateral mark, Cardinal mark, Isolated danger mark, Safe water mark, Special mark"
+                front: "What are the 5 types of navigation marks?",
+                back: "Lateral, Cardinal, Isolated danger, Safe water, Special"
             },
             {
                 id: 81,
@@ -575,13 +678,13 @@
             {
                 id: 82,
                 category: "tides",
-                front: "The height of ______ is the mean of the lower of the two daily high waters over a long period of time.",
+                front: "The height of ______ is the mean of the lower of two daily high waters.",
                 back: "MLHW"
             },
             {
                 id: 83,
                 category: "tides",
-                front: "The ______ is highest level which can be predicted to occur under average meteorological conditions and any combination of astronomical conditions.",
+                front: "The ______ is the highest predictable tide level.",
                 back: "Highest Astronomical Tide"
             },
             {
@@ -605,13 +708,13 @@
             {
                 id: 87,
                 category: "tides",
-                front: "Tidal effect of heavenly bodies on earth other than sun and moon is ______",
+                front: "Tidal effect of non-Sun/Moon bodies is ______.",
                 back: "Negligible"
             },
             {
                 id: 88,
                 category: "tides",
-                front: "At ___________ tides higher high waters and lower low waters than usual will be experienced.",
+                front: "At ______ tides, higher highs and lower lows occur.",
                 back: "Spring"
             },
             {
@@ -629,26 +732,26 @@
             {
                 id: 91,
                 category: "tides",
-                front: "UAE has ______ type of tides.",
+                front: "UAE has ______ tides.",
                 back: "Semi-diurnal"
             },
             {
                 id: 92,
                 category: "tides",
-                front: "The earth and moon forming an independent system rotating about a common center of gravity known as the earth-moon ___________",
+                front: "Earth-Moon rotation center is called ______.",
                 back: "Barycentre"
             },
             {
                 id: 93,
                 category: "tides",
-                front: "The Sun has a much greater mass than the Moon, the Sun's tide-raising force is nevertheless only about ______ that of the Moon.",
+                front: "Sun's tide-raising force is ______ of the Moon's.",
                 back: "45%"
             },
             {
                 id: 20,
                 category: "tides",
                 front: "What is a lunar month?",
-                back: "29.5 days which the moon takes to revolve around the Earth with respect to the sun"
+                back: "29.5 days (Moon's orbit around Earth)"
             },
             {
                 id: 21,
@@ -659,7 +762,7 @@
             {
                 id: 22,
                 category: "tides",
-                front: "Which heavenly bodies have the greatest tide-raising effect?",
+                front: "Which bodies cause the strongest tides?",
                 back: "Moon and Sun"
             },
             {
@@ -677,26 +780,26 @@
             {
                 id: 118,
                 category: "position",
-                front: "What is effect of own ship speed on leeway?",
+                front: "How does ship speed affect leeway?",
                 back: "Higher speed = less leeway"
             },
             {
                 id: 121,
                 category: "position",
-                front: "Name the factors which effect leeway?",
-                back: "Ship speed, wind speed, longitudinal area, water depth"
+                front: "Name factors affecting leeway?",
+                back: "Ship speed, wind, hull area, water depth"
             },
             {
                 id: 141,
                 category: "position",
-                front: "List any 5 methods of obtaining a fix?",
-                back: "Bearing+range, bearing+sounding, transit+angle, running fix, Two or more ranges"
+                front: "List any 5 fix methods?",
+                back: "Bearing+range, bearing+sounding, transit+angle, running fix, astronomical"
             },
             {
                 id: 142,
                 category: "position",
                 front: "Explain any 3 causes of cocked hat.",
-                back: "Error in identifying the object, Error in plotting the lines of bearing, Compass error "
+                back: "Time gaps, landmark misidentification, compass error"
             },
             {
                 id: 16,
@@ -707,8 +810,8 @@
             {
                 id: 21,
                 category: "instruments",
-                front: "What is action on crossing the date line?",
-                back: "on an easterly course, the date is put back a day; on a westerly course, the date is put forward a day"
+                front: "What happens when crossing the date line?",
+                back: "Eastbound: lose a day; Westbound: gain a day"
             },
             {
                 id: 2,
@@ -719,37 +822,37 @@
             {
                 id: 3,
                 category: "instruments",
-                front: "How is higher readings of Stuart's Distance Meter considered?",
-                back: "cannot generally be considered reliable"
+                front: "Are high Stuart's Distance Meter readings reliable?",
+                back: "No"
             },
             {
                 id: 4,
                 category: "instruments",
-                front: "What is height scale of Stuart's Distance Meter?",
+                front: "Stuart's Distance Meter height scale range?",
                 back: "0 to 220 feet"
             },
             {
                 id: 7,
                 category: "instruments",
-                front: "21.	Where the record of log error be recorded?",
+                front: "Where are log errors recorded?",
                 back: "Navigational Data Book"
             },
             {
                 id: 125,
                 category: "publications",
-                front: "Name the publications which contain information about currents?",
+                front: "Publications with current info?",
                 back: "Charts, Sailing Directions, Ocean Passages, Mariner's Handbook"
             },
             {
                 id: 128,
                 category: "publications",
-                front: "List any Five publications used for navigation at sea?",
-                back: "Admiralty Sailing Directions, Admiralty List of Light and fog signal, Admiralty Tide Tables, Nautical Almanac, Admiralty List of Radio Signals"
+                front: "List any 5 navigation publications?",
+                back: "Sailing Directions, List of Lights, Tide Tables, Nautical Almanac, Ocean Passages"
             },
             {
                 id: 130,
                 category: "publications",
-                front: "List information given in Admiralty Sailing Directions?",
+                front: "Info in Admiralty Sailing Directions?",
                 back: "Coast descriptions, tides, ports, hazards, buoyage systems, routes"
             }
         ];
@@ -757,6 +860,15 @@
         // Initialize viewedCards from localStorage
         let viewedCards = JSON.parse(localStorage.getItem('viewedCards')) || [];
         let currentFilter = 'all';
+        
+        // Check for dark mode preference
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+        const savedDarkMode = localStorage.getItem('darkMode') === 'true';
+        
+        // Set initial dark mode
+        if (savedDarkMode || prefersDarkScheme.matches) {
+            document.body.classList.add('dark-mode');
+        }
 
         // Function to render flashcards
         function renderFlashcards() {
@@ -862,6 +974,18 @@
                 localStorage.removeItem('viewedCards');
                 renderFlashcards();
             }
+        });
+
+        // Dark mode toggle
+        document.getElementById('dark-mode-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDarkMode);
+            
+            // Update footer text
+            document.querySelector('.footer-note p').textContent = 
+                isDarkMode ? "Dark Mode Enabled | Tap cards to flip | Progress saved automatically" :
+                "Light Mode Enabled | Tap cards to flip | Progress saved automatically";
         });
 
         // Initialize
